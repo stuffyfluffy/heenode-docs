@@ -13,6 +13,21 @@ export const CATEGORIES = [
   'Юридическое',
 ] as const;
 
+const attachment = z
+  .object({
+    /** Название на странице документа: «Финансовый расчёт», «Обоснование». */
+    title: z.string(),
+    /** Пояснение в одну строку. */
+    description: z.string().optional(),
+    /** Исходник Typst относительно папки документа — соберётся в PDF. */
+    source: z.string().optional(),
+    /** Готовый файл любого формата (PDF, XLSX, CSV…) относительно папки документа. */
+    file: z.string().optional(),
+  })
+  .refine((a) => Boolean(a.source) !== Boolean(a.file), {
+    message: 'У приложения должно быть ровно одно из полей: source или file',
+  });
+
 const version = z.object({
   /** Номер версии, например "1.0". Используется в адресе: /documents/<id>/v1.0/ */
   version: z.string(),
@@ -24,6 +39,8 @@ const version = z.object({
   source: z.string().optional(),
   /** Готовый PDF относительно папки документа, если исходника нет. */
   file: z.string().optional(),
+  /** Приложения к этой версии: обоснование, финансовые расчёты, исходные данные. */
+  attachments: z.array(attachment).default([]),
   /** Этап 2: CID в IPFS и ID предложения DAO. Пока не заполняются. */
   cid: z.string().optional(),
   proposalId: z.string().optional(),

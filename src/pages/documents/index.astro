@@ -1,7 +1,7 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 import { CATEGORIES } from '../../content.config';
-import { getDocuments, pdfFor, formatBytes, formatDate, STATUS_LABEL } from '../../lib/documents';
+import { getDocuments, pdfFor, formatBytes, formatDate, attachmentsLabel, STATUS_LABEL } from '../../lib/documents';
 import { url } from '../../lib/url';
 
 const docs = await getDocuments();
@@ -96,6 +96,9 @@ const filters = ['Все', ...CATEGORIES.filter((c) => counts[c] > 0)];
                 <span class="doc__text">
                   <a href={url(`documents/${doc.id}/`)}>{doc.data.title}</a>
                   <span>{doc.data.description}</span>
+                  {pdf.attachments.length > 0 && (
+                    <span class="doc__att fd-mono">+ {attachmentsLabel(pdf.attachments.length)}</span>
+                  )}
                 </span>
               </span>
               <span role="cell">{doc.data.category}</span>
@@ -284,6 +287,7 @@ const filters = ['Все', ...CATEGORIES.filter((c) => counts[c] > 0)];
   .doc__text a { font-weight: 600; color: var(--sl-color-white); text-decoration: none; }
   .doc__text a:hover { color: var(--sl-color-text-accent); }
   .doc__text span { font-size: 0.8125rem; color: var(--sl-color-gray-3); }
+  .doc__text .doc__att { font-size: 0.75rem; }
   .actions { display: flex; justify-content: flex-end; gap: 0.5rem; }
   .muted { color: var(--sl-color-gray-3); }
   .empty { margin: 0; padding: 3rem 1.25rem; border-top: 1px solid var(--fd-line); text-align: center; color: var(--sl-color-gray-3); }

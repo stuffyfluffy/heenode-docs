@@ -7,6 +7,7 @@ import {
   formatBytes,
   formatDate,
   pagesLabel,
+  attachmentsLabel,
   STATUS_LABEL,
   type DocEntry,
 } from '../../../lib/documents';
@@ -83,6 +84,47 @@ const repo = 'https://github.com/stuffyfluffy/heenode-docs';
     <div class="layout">
       <section class="main" aria-label="Документ">
         <PdfViewer src={pdfUrl} title={data.title} pages={pdf.pages} />
+        {
+          pdf.attachments.length > 0 && (
+            <section class="attachments" aria-labelledby="attachments-title">
+              <div class="attachments__head">
+                <h2 id="attachments-title">Приложения</h2>
+                <span class="muted">{attachmentsLabel(pdf.attachments.length)} к v{version.version}</span>
+              </div>
+              <ul>
+                {pdf.attachments.map((a) => (
+                  <li class="att">
+                    <span class="att__main">
+                      <span class="fd-pdf-icon" aria-hidden="true">{a.ext.toUpperCase().slice(0, 4)}</span>
+                      <span class="att__text">
+                        <span class="att__title">{a.title}</span>
+                        {a.description && <span class="att__desc">{a.description}</span>}
+                        <span class="att__meta fd-mono">
+                          {a.ext.toUpperCase()} · {formatBytes(a.bytes)}
+                          {a.pages !== null && ` · ${pagesLabel(a.pages)}`}
+                        </span>
+                        <span class="att__hash fd-mono" title="SHA-256">SHA-256 {a.sha256}</span>
+                      </span>
+                    </span>
+                    <span class="att__actions">
+                      {a.ext === 'pdf' && (
+                        <a class="fd-btn" href={url(a.href)} target="_blank" rel="noopener">Открыть</a>
+                      )}
+                      <a class="fd-btn fd-btn--soft" href={url(a.href)} download={a.filename} aria-label={`Скачать: ${a.title}`}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 4v12M7 11l5 5 5-5M4 20h16"></path></svg>
+                        Скачать
+                      </a>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <p class="hint">
+                Приложения меняются только через репозиторий, вместе с документом:{' '}
+                <a href={`${repo}/tree/main/documents/${doc.id}`}>исходники в GitHub</a>
+              </p>
+            </section>
+          )
+        }
         <details class="text">
           <summary>Текст документа</summary>
           <pre>{pdf.text}</pre>
@@ -213,6 +255,28 @@ const repo = 'https://github.com/stuffyfluffy/heenode-docs';
   .versions li:first-child { border-top: 0; }
   .strong { font-weight: 600; color: var(--sl-color-white); }
   .muted { color: var(--sl-color-gray-3); font-weight: 400; }
+  .attachments {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.25rem;
+    border: 1px solid var(--fd-line);
+    border-radius: 0.875rem;
+    background: var(--fd-surface);
+    font-size: 0.875rem;
+  }
+  .attachments__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.75rem; }
+  .docpage .attachments h2 { margin: 0; font-family: var(--fd-font-display); font-size: 1rem; line-height: 1.3; font-weight: 500; color: var(--sl-color-white); }
+  .attachments ul { list-style: none; margin: 0; padding: 0; }
+  .att { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 0.875rem; padding: 0.875rem 0; border-top: 1px solid var(--fd-line); }
+  .att:first-child { border-top: 0; padding-top: 0.25rem; }
+  .att__main { flex: 1 1 18rem; min-width: 0; display: flex; align-items: flex-start; gap: 0.875rem; }
+  .att__text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.125rem; }
+  .att__title { font-weight: 600; color: var(--sl-color-white); }
+  .att__desc { color: var(--sl-color-gray-2); }
+  .att__meta { font-size: 0.75rem; color: var(--sl-color-gray-3); }
+  .att__hash { font-size: 0.6875rem; color: var(--sl-color-gray-3); overflow-wrap: anywhere; }
+  .att__actions { display: flex; gap: 0.5rem; margin-left: auto; }
   .text { border: 1px solid var(--fd-line); border-radius: 0.875rem; background: var(--fd-surface); }
   .text summary { padding: 0.875rem 1.25rem; cursor: pointer; font-weight: 600; }
   .text pre {

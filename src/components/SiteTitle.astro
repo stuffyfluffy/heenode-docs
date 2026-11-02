@@ -1,0 +1,55 @@
+---
+import Default from '@astrojs/starlight/components/SiteTitle.astro';
+import { url } from '../lib/url';
+
+const path = Astro.url.pathname;
+const inDocuments = path.includes('/documents');
+const isEn = Astro.locals.starlightRoute.locale === 'en';
+---
+
+<div class="fd-brand">
+  <Default />
+  <nav class="fd-top-nav" aria-label={isEn ? 'Site sections' : 'Разделы сайта'}>
+    <a href={url(isEn ? 'en/' : '/')} aria-current={!inDocuments ? 'page' : undefined}>
+      {isEn ? 'Docs' : 'Документация'}
+    </a>
+    <a href={url('documents/')} aria-current={inDocuments ? 'page' : undefined}>
+      {isEn ? 'Documents' : 'Документы'}
+    </a>
+  </nav>
+</div>
+
+<style>
+  .fd-brand {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    min-width: 0;
+  }
+  .fd-top-nav {
+    display: none;
+    gap: 0.125rem;
+  }
+  .fd-top-nav a {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    color: var(--sl-color-gray-2);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .fd-top-nav a:hover {
+    background: var(--sl-color-gray-6);
+    color: var(--sl-color-white);
+  }
+  .fd-top-nav a[aria-current='page'] {
+    background: var(--sl-color-accent-low);
+    color: var(--sl-color-text-accent);
+  }
+  @media (min-width: 50rem) {
+    .fd-top-nav {
+      display: flex;
+    }
+  }
+</style>

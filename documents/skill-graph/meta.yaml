@@ -1,0 +1,10 @@
+title: Граф навыков
+description: Модель данных, подбор команд, приём в subDAO и поиск исполнителей.
+category: Спецификации
+status: draft
+related:
+  - label: Граф навыков — в документации
+    href: /dao/skill-graph/
+versions:
+  - version: "0.1"
+    source: v0.1.typ

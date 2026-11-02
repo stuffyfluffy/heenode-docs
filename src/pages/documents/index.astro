@@ -1,0 +1,291 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import { CATEGORIES } from '../../content.config';
+import { getDocuments, pdfFor, formatBytes, formatDate, STATUS_LABEL } from '../../lib/documents';
+import { url } from '../../lib/url';
+
+const docs = await getDocuments();
+const featured = docs.filter((d) => d.data.featured);
+const rows = docs.map((d) => {
+  const current = d.data.versions[0];
+  const pdf = pdfFor(d.id, current.version);
+  return { doc: d, current, pdf };
+});
+const counts = Object.fromEntries(CATEGORIES.map((c) => [c, docs.filter((d) => d.data.category === c).length]));
+const filters = ['Все', ...CATEGORIES.filter((c) => counts[c] > 0)];
+---
+
+<StarlightPage
+  frontmatter={{
+    title: 'Документы DAO',
+    description: 'Устав, whitepaper, регламенты и отчёты Frontier DAO в PDF.',
+    template: 'splash',
+    tableOfContents: false,
+    editUrl: false,
+  }}
+>
+  <div class="lib not-content">
+    <div class="lib__intro">
+      <p>
+        Устав, whitepaper, регламенты и отчёты. У каждого файла указаны версия и контрольная сумма SHA-256 — по ней
+        можно убедиться, что файл не изменён.
+      </p>
+      <a class="fd-btn" href="https://github.com/stuffyfluffy/frontier-docs/blob/main/CONTRIBUTING.md">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+        Предложить документ
+      </a>
+    </div>
+
+    {
+      featured.length > 0 && (
+        <section class="lib__featured" aria-label="Ключевые документы">
+          {featured.map((d, i) => (
+            <a class:list={['card', { 'card--dark': i === 0 }]} href={url(`documents/${d.id}/`)}>
+              <span class="card__kicker fd-mono">
+                {d.data.category} · v{d.data.versions[0].version}
+                {d.data.status === 'draft' && ' · черновик'}
+              </span>
+              <span class="card__title">{d.data.title}</span>
+              <span class="card__desc">{d.data.description}</span>
+              <span class="card__cta">Открыть PDF →</span>
+            </a>
+          ))}
+        </section>
+      )
+    }
+
+    <div class="lib__controls">
+      <div class="lib__filters" role="group" aria-label="Категория">
+        {
+          filters.map((c, i) => (
+            <button type="button" class="pill" data-cat={c} aria-pressed={i === 0 ? 'true' : 'false'}>
+              {c}
+              <span class="pill__count fd-mono">{c === 'Все' ? docs.length : counts[c]}</span>
+            </button>
+          ))
+        }
+      </div>
+      <div class="lib__search">
+        <label class="fd-sr" for="doc-search">Поиск по документам</label>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+        <input id="doc-search" type="search" placeholder="Название документа" autocomplete="off" />
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table" role="table" aria-label="Документы">
+        <div class="tr th" role="row">
+          <span role="columnheader">Документ</span>
+          <span role="columnheader">Категория</span>
+          <span role="columnheader">Версия</span>
+          <span role="columnheader">Дата</span>
+          <span role="columnheader">Размер</span>
+          <span role="columnheader">Статус</span>
+          <span role="columnheader" class="right">Действия</span>
+        </div>
+        {
+          rows.map(({ doc, current, pdf }) => (
+            <div
+              class="tr"
+              role="row"
+              data-cat={doc.data.category}
+              data-search={`${doc.data.title} ${doc.data.description}`.toLowerCase()}
+            >
+              <span class="doc" role="cell">
+                <span class="fd-pdf-icon" aria-hidden="true">PDF</span>
+                <span class="doc__text">
+                  <a href={url(`documents/${doc.id}/`)}>{doc.data.title}</a>
+                  <span>{doc.data.description}</span>
+                </span>
+              </span>
+              <span role="cell">{doc.data.category}</span>
+              <span role="cell" class="fd-mono">v{current.version}</span>
+              <span role="cell" class="fd-mono muted">{formatDate(current.date)}</span>
+              <span role="cell" class="fd-mono muted">{formatBytes(pdf.bytes)}</span>
+              <span role="cell">
+                <span class="fd-badge" data-status={doc.data.status}>{STATUS_LABEL[doc.data.status]}</span>
+              </span>
+              <span role="cell" class="actions">
+                <a class="fd-btn" href={url(`documents/${doc.id}/`)}>Открыть</a>
+                <a class="fd-btn fd-btn--soft" href={url(pdf.href)} download={pdf.filename} aria-label={`Скачать PDF: ${doc.data.title}`}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 4v12M7 11l5 5 5-5M4 20h16"></path></svg>
+                  Скачать
+                </a>
+              </span>
+            </div>
+          ))
+        }
+        <p class="empty" hidden>Ничего не найдено. Попробуйте другую категорию или запрос.</p>
+      </div>
+    </div>
+    <p class="lib__count muted" aria-live="polite">
+      Показано <span data-shown>{docs.length}</span> из {docs.length}
+    </p>
+  </div>
+</StarlightPage>
+
+<script>
+  const root = document.querySelector<HTMLElement>('.lib');
+  if (root) {
+    const pills = [...root.querySelectorAll<HTMLButtonElement>('.pill')];
+    const rows = [...root.querySelectorAll<HTMLElement>('.tr[data-cat]')];
+    const input = root.querySelector<HTMLInputElement>('#doc-search')!;
+    const empty = root.querySelector<HTMLElement>('.empty')!;
+    const shown = root.querySelector<HTMLElement>('[data-shown]')!;
+    let cat = 'Все';
+
+    const apply = () => {
+      const q = input.value.trim().toLowerCase();
+      let n = 0;
+      for (const row of rows) {
+        const ok = (cat === 'Все' || row.dataset.cat === cat) && (!q || row.dataset.search!.includes(q));
+        row.hidden = !ok;
+        if (ok) n++;
+      }
+      empty.hidden = n > 0;
+      shown.textContent = String(n);
+    };
+
+    for (const pill of pills) {
+      pill.addEventListener('click', () => {
+        cat = pill.dataset.cat!;
+        pills.forEach((p) => p.setAttribute('aria-pressed', String(p === pill)));
+        apply();
+      });
+    }
+    input.addEventListener('input', apply);
+  }
+</script>
+
+<style>
+  .lib {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .lib__intro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+  }
+  .lib__intro p {
+    max-width: 44rem;
+    margin: 0;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    color: var(--sl-color-gray-2);
+  }
+  .lib__featured {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    min-height: 11rem;
+    padding: 1.375rem;
+    border-radius: 1rem;
+    border: 1px solid var(--fd-line);
+    background: var(--fd-surface);
+    color: var(--sl-color-white);
+    text-decoration: none;
+  }
+  .card:hover { border-color: var(--sl-color-gray-4); }
+  .card__kicker { font-size: 0.75rem; color: var(--sl-color-gray-3); text-transform: uppercase; }
+  .card__title { font-family: var(--fd-font-display); font-size: 1.3rem; font-weight: 500; line-height: 1.2; }
+  .card__desc { font-size: 0.875rem; line-height: 1.5; color: var(--sl-color-gray-2); }
+  .card__cta { margin-top: auto; font-size: 0.875rem; font-weight: 600; color: var(--sl-color-text-accent); }
+  .card--dark { background: #15171c; border-color: #15171c; color: #ffffff; }
+  .card--dark .card__kicker { color: #b9b6ad; }
+  .card--dark .card__desc { color: #d9d6ce; }
+  .card--dark .card__cta { color: #ffffff; }
+  :root:not([data-theme='light']) .card--dark { background: var(--sl-color-accent-low); border-color: var(--sl-color-accent-low); }
+
+  .lib__controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+  }
+  .lib__filters { display: flex; flex-wrap: wrap; gap: 0.5rem; flex: 999 1 30rem; }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-height: 40px;
+    padding: 0 0.875rem;
+    border-radius: 999px;
+    border: 1px solid var(--sl-color-gray-5);
+    background: var(--fd-surface);
+    color: var(--sl-color-gray-1);
+    font: inherit;
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+  .pill__count { font-size: 0.75rem; color: var(--sl-color-gray-3); }
+  .pill[aria-pressed='true'] {
+    border-color: var(--sl-color-accent);
+    background: var(--sl-color-accent);
+    color: var(--sl-color-text-invert);
+    font-weight: 600;
+  }
+  :root[data-theme='light'] .pill[aria-pressed='true'] { color: #ffffff; }
+  .pill[aria-pressed='true'] .pill__count { color: inherit; opacity: 0.85; }
+
+  .lib__search { position: relative; flex: 1 1 16rem; color: var(--sl-color-gray-3); }
+  .lib__search svg { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); }
+  .lib__search input {
+    width: 100%;
+    box-sizing: border-box;
+    height: 44px;
+    padding: 0 0.875rem 0 2.25rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.625rem;
+    background: var(--fd-surface);
+    color: var(--sl-color-white);
+    font: inherit;
+    font-size: 0.875rem;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--fd-line);
+    border-radius: 0.875rem;
+    background: var(--fd-surface);
+  }
+  .table { min-width: 60rem; }
+  .tr {
+    display: grid;
+    grid-template-columns: minmax(16rem, 1fr) 7.5rem 4rem 6rem 4.5rem 7.5rem 12rem;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.875rem 1.25rem;
+    border-top: 1px solid var(--fd-line);
+    font-size: 0.875rem;
+  }
+  .tr[hidden] { display: none; }
+  .th {
+    border-top: 0;
+    background: var(--fd-surface-sunk);
+    font-family: var(--sl-font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--sl-color-gray-3);
+  }
+  .right { text-align: right; }
+  .doc { display: flex; gap: 0.875rem; align-items: center; min-width: 0; }
+  .doc__text { display: flex; flex-direction: column; gap: 0.125rem; min-width: 0; }
+  .doc__text a { font-weight: 600; color: var(--sl-color-white); text-decoration: none; }
+  .doc__text a:hover { color: var(--sl-color-text-accent); }
+  .doc__text span { font-size: 0.8125rem; color: var(--sl-color-gray-3); }
+  .actions { display: flex; justify-content: flex-end; gap: 0.5rem; }
+  .muted { color: var(--sl-color-gray-3); }
+  .empty { margin: 0; padding: 3rem 1.25rem; border-top: 1px solid var(--fd-line); text-align: center; color: var(--sl-color-gray-3); }
+  .lib__count { margin: 0; font-size: 0.8125rem; }
+</style>

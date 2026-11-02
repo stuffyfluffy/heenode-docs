@@ -1,0 +1,10 @@
+title: Регламент ликвидной демократии
+description: Треки, делегирование, кворум и сроки голосования.
+category: Регламенты
+status: draft
+related:
+  - label: Ликвидная демократия — в документации
+    href: /dao/liquid-democracy/
+versions:
+  - version: "0.1"
+    source: v0.1.typ

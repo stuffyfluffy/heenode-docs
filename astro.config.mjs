@@ -1,0 +1,97 @@
+// @ts-check
+import { defineConfig } from 'astro/config';
+import starlight from '@astrojs/starlight';
+
+// SITE_URL и BASE_PATH задаются в CI. Для своего домена BASE_PATH не нужен.
+const site = process.env.SITE_URL || 'https://docs.example.org';
+const base = process.env.BASE_PATH || '/';
+
+export default defineConfig({
+  site,
+  base,
+  integrations: [
+    starlight({
+      title: 'Frontier DAO',
+      description: 'Документация и нормативные документы Frontier DAO',
+      logo: { src: './src/assets/logo.svg', replacesTitle: false },
+      favicon: '/favicon.svg',
+      defaultLocale: 'root',
+      locales: {
+        root: { label: 'Русский', lang: 'ru' },
+        en: { label: 'English', lang: 'en' },
+      },
+      // TODO: заменить на адрес репозитория
+      social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/stuffyfluffy/frontier-docs' }],
+      editLink: { baseUrl: 'https://github.com/stuffyfluffy/frontier-docs/edit/main/' },
+      lastUpdated: true,
+      customCss: [
+        '@fontsource/ibm-plex-sans/400.css',
+        '@fontsource/ibm-plex-sans/500.css',
+        '@fontsource/ibm-plex-sans/600.css',
+        '@fontsource/ibm-plex-mono/400.css',
+        '@fontsource/ibm-plex-mono/500.css',
+        '@fontsource/unbounded/500.css',
+        '@fontsource/unbounded/600.css',
+        './src/styles/theme.css',
+      ],
+      components: {
+        SiteTitle: './src/components/SiteTitle.astro',
+      },
+      sidebar: [
+        {
+          label: 'Начало',
+          translations: { en: 'Getting started' },
+          items: [
+            { slug: 'index', label: 'Введение', translations: { en: 'Introduction' } },
+            { slug: 'start/mission' },
+            { slug: 'start/glossary' },
+          ],
+        },
+        {
+          label: 'Устройство DAO',
+          translations: { en: 'How the DAO works' },
+          items: [
+            { slug: 'dao/liquid-democracy' },
+            { slug: 'dao/skill-graph' },
+            { slug: 'dao/subdao-fork' },
+            { slug: 'dao/treasury' },
+          ],
+        },
+        {
+          label: 'Участникам',
+          translations: { en: 'For members' },
+          items: [
+            { slug: 'members/join' },
+            { slug: 'members/learn' },
+            { slug: 'members/teach' },
+            { slug: 'members/research' },
+          ],
+        },
+        {
+          label: 'Управление',
+          translations: { en: 'Governance' },
+          items: [
+            { slug: 'governance/proposals' },
+            { slug: 'governance/voting' },
+            { slug: 'governance/delegation' },
+          ],
+        },
+        {
+          label: 'Нормативные документы',
+          translations: { en: 'Normative documents' },
+          items: [
+            { slug: 'normative/overview' },
+            { slug: 'normative/charter' },
+            { slug: 'normative/user-agreement' },
+          ],
+        },
+        {
+          label: 'Все документы (PDF)',
+          translations: { en: 'All documents (PDF)' },
+          link: '/documents/',
+          attrs: { class: 'sidebar-docs-link' },
+        },
+      ],
+    }),
+  ],
+});

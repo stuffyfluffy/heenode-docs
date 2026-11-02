@@ -1,0 +1,11 @@
+title: Сетевое государство свободного обучения
+description: Концепция DAO и модель вознаграждений за учёбу, преподавание и исследования.
+category: Whitepaper
+status: draft
+featured: true
+related:
+  - label: Миссия и принципы
+    href: /start/mission/
+versions:
+  - version: "0.1"
+    source: v0.1.typ

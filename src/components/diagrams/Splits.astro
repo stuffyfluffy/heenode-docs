@@ -1,0 +1,61 @@
+---
+// Полосы долей: как делится каждый платёж.
+interface Part { share: number; label: string; accent?: boolean }
+interface Row { label: string; parts: Part[] }
+interface Props { rows: Row[]; caption?: string }
+
+const { rows, caption } = Astro.props;
+---
+
+<figure class="fd-fig not-content">
+  {
+    rows.map((row) => (
+      <div class="row">
+        <span class="fd-link label">{row.label}</span>
+        <div class="bar">
+          {row.parts.map((p) => (
+            <span class:list={['part', { accent: p.accent }]} style={`flex-grow: ${p.share}`}>
+              {p.label}
+            </span>
+          ))}
+        </div>
+      </div>
+    ))
+  }
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .row {
+    display: grid;
+    grid-template-columns: 11rem 1fr;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .bar {
+    display: flex;
+    gap: 3px;
+  }
+  .part {
+    flex-basis: 0;
+    min-width: 0;
+    padding: 0.45rem 0.5rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.4rem;
+    font-size: 0.8125rem;
+    text-align: center;
+    color: var(--sl-color-white);
+  }
+  .accent {
+    border-color: transparent;
+    background: var(--sl-color-accent-low);
+    color: var(--sl-color-text-accent);
+    font-weight: 600;
+  }
+  @media (max-width: 40rem) {
+    .row {
+      grid-template-columns: 1fr;
+      gap: 0.35rem;
+    }
+  }
+</style>

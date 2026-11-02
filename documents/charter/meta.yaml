@@ -1,0 +1,15 @@
+title: Устав Frontier DAO
+description: Цели, участники, треки управления и порядок изменения правил.
+category: Устав
+status: draft
+featured: true
+related:
+  - label: Устав — простым языком
+    href: /normative/charter/
+  - label: Ликвидная демократия — в документации
+    href: /dao/liquid-democracy/
+  - label: Миссия и принципы
+    href: /start/mission/
+versions:
+  - version: "0.1"
+    source: v0.1.typ

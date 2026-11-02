@@ -1,0 +1,69 @@
+---
+// Регулятор наград: доля выплат в зависимости от запаса хода казны (правила из «Казны и токеномики»).
+interface Props { caption?: string }
+const { caption } = Astro.props;
+
+const W = 560, H = 220, L = 48, T = 12, R = 12, B = 40;
+const pw = W - L - R, ph = H - T - B;
+const x = (m: number) => L + (m / 18) * pw;
+const y = (p: number) => T + ph - (p / 100) * ph;
+const pts = (list: [number, number][]) => list.map(([m, p]) => `${x(m)},${y(p)}`).join(' ');
+---
+
+<figure class="fd-fig not-content">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Награды полные при запасе хода от 12 месяцев, ниже снижаются пропорционально до 20%; рецензентам — не ниже 50%; при запасе меньше 6 месяцев — аварийный режим">
+    <rect class="zone" x={x(0)} y={T} width={x(6) - x(0)} height={ph} />
+    <text class="label" x={x(0) + 8} y={T + 18}>аварийный режим</text>
+    {[20, 50, 100].map((p) => (
+      <>
+        <line class="grid" x1={x(0)} x2={x(18)} y1={y(p)} y2={y(p)} />
+        <text class="label" x={L - 8} y={y(p) + 4} text-anchor="end">{p}%</text>
+      </>
+    ))}
+    <line class="axis" x1={x(0)} x2={x(18)} y1={y(0)} y2={y(0)} />
+    <line class="axis" x1={x(0)} x2={x(0)} y1={y(0)} y2={T} />
+    {[0, 6, 12, 18].map((m) => (
+      <text class="label" x={x(m)} y={y(0) + 18} text-anchor="middle">{m}</text>
+    ))}
+    <text class="label" x={L + pw / 2} y={H - 4} text-anchor="middle">запас хода казны, месяцев расходов</text>
+    <polyline class="reviewers" points={pts([[0, 50], [6, 50]])} />
+    <polyline class="main" points={pts([[0, 20], [2.4, 20], [12, 100], [18, 100]])} />
+  </svg>
+  <div class="legend fd-link">
+    <span><i class="key key--main" />награды ученикам и преподавателям</span>
+    <span><i class="key key--reviewers" />награды рецензентам (не ниже 50%)</span>
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .zone { fill: var(--fd-surface-sunk); }
+  .grid { stroke: var(--sl-color-gray-5); stroke-dasharray: 2 4; }
+  .axis { stroke: var(--sl-color-gray-4); }
+  .label { fill: var(--sl-color-gray-3); font-size: 13px; font-family: var(--sl-font); }
+  .main { fill: none; stroke: var(--sl-color-accent); stroke-width: 2.5; }
+  .reviewers { fill: none; stroke: var(--sl-color-white); stroke-width: 2; stroke-dasharray: 6 5; }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+  }
+  .legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .key {
+    display: inline-block;
+    width: 1.5rem;
+    border-top: 2.5px solid var(--sl-color-accent);
+  }
+  .key--reviewers {
+    border-top: 2px dashed var(--sl-color-white);
+  }
+</style>

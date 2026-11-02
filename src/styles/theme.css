@@ -1,0 +1,319 @@
+/* Токены из макета. Тёмная тема — по умолчанию в Starlight, светлая — основная в макете. */
+
+:root {
+  --sl-font: 'IBM Plex Sans', system-ui, sans-serif;
+  --sl-font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --fd-font-display: 'Unbounded', 'IBM Plex Sans', sans-serif;
+
+  /* Тёмная тема */
+  --sl-color-white: #f6f5f0;
+  --sl-color-gray-1: #e8e6df;
+  --sl-color-gray-2: #d0cdc4;
+  --sl-color-gray-3: #a5a29a;
+  --sl-color-gray-4: #6d6b66;
+  --sl-color-gray-5: #34363d;
+  --sl-color-gray-6: #1d1f25;
+  --sl-color-black: #141519;
+
+  --sl-color-accent-low: #1b2858;
+  --sl-color-accent: #6f93ff;
+  --sl-color-accent-high: #c9d6ff;
+
+  --fd-surface: #1a1c22;
+  --fd-surface-sunk: #202229;
+  --fd-line: #34363d;
+  --fd-muted: #a5a29a;
+  --fd-ok-bg: #173a27;
+  --fd-ok: #8fd6ad;
+  --fd-warn-bg: #3d2b0c;
+  --fd-warn: #f0c27a;
+  --fd-neutral-bg: #2a2c33;
+  --fd-neutral: #d0cdc4;
+  --fd-pdf: #ff8f7f;
+}
+
+:root[data-theme='light'] {
+  --sl-color-white: #15171c;
+  --sl-color-gray-1: #24272f;
+  --sl-color-gray-2: #33373f;
+  --sl-color-gray-3: #4a4f59;
+  --sl-color-gray-4: #737782;
+  --sl-color-gray-5: #d6d3ca;
+  --sl-color-gray-6: #eceae3;
+  --sl-color-gray-7: #ffffff;
+  --sl-color-black: #f6f5f0;
+
+  --sl-color-accent-low: #e3e9fb;
+  --sl-color-accent: #1d4ed8;
+  --sl-color-accent-high: #1e3a8a;
+
+  --sl-color-bg-nav: #ffffff;
+  --sl-color-bg-sidebar: #f6f5f0;
+  --sl-color-hairline: #dcdad2;
+  --sl-color-hairline-light: #dcdad2;
+  --sl-color-hairline-shade: #dcdad2;
+  --sl-color-bg-inline-code: #eceae3;
+
+  --fd-surface: #ffffff;
+  --fd-surface-sunk: #f1efe9;
+  --fd-line: #dcdad2;
+  --fd-muted: #4a4f59;
+  --fd-ok-bg: #e3f1e8;
+  --fd-ok: #17603c;
+  --fd-warn-bg: #fbefd9;
+  --fd-warn: #7a4600;
+  --fd-neutral-bg: #eceae3;
+  --fd-neutral: #3b3f48;
+  --fd-pdf: #9c2b1f;
+}
+
+/* Заголовки — Unbounded, как в макете */
+h1#_top,
+.sl-markdown-content :is(h1, h2):not(:where(.not-content *)),
+.fd-display {
+  font-family: var(--fd-font-display);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+h1#_top {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.sl-markdown-content h3 {
+  font-weight: 600;
+}
+
+.site-title {
+  font-family: var(--fd-font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+/* Ссылка на библиотеку внизу сайдбара */
+.sidebar-docs-link {
+  margin-top: 0.75rem;
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 0.5rem;
+  background: var(--fd-surface);
+}
+
+/* Подпись над группами сайдбара — моноширинная, как в макете */
+.sidebar-content .group-label .large {
+  font-family: var(--sl-font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sl-color-gray-3);
+}
+
+/* Общие элементы библиотеки документов */
+.fd-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.fd-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.fd-badge[data-status='active'] { background: var(--fd-ok-bg); color: var(--fd-ok); }
+.fd-badge[data-status='draft'] { background: var(--fd-warn-bg); color: var(--fd-warn); }
+.fd-badge[data-status='published'] { background: var(--fd-neutral-bg); color: var(--fd-neutral); }
+.fd-badge[data-status='archived'] { background: var(--fd-neutral-bg); color: var(--fd-muted); }
+
+.fd-pdf-icon {
+  flex-shrink: 0;
+  width: 34px;
+  height: 42px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  background: var(--fd-surface-sunk);
+  border: 1px solid var(--fd-line);
+  font-family: var(--sl-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--fd-pdf);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 4px;
+}
+
+.fd-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 40px;
+  padding: 0 0.9rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--sl-color-gray-5);
+  background: var(--fd-surface);
+  color: var(--sl-color-white);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+}
+.fd-btn:hover { background: var(--fd-surface-sunk); color: var(--sl-color-white); }
+.fd-btn--accent {
+  border-color: var(--sl-color-accent);
+  background: var(--sl-color-accent);
+  color: var(--sl-color-text-invert);
+  font-weight: 600;
+}
+:root[data-theme='light'] .fd-btn--accent { color: #ffffff; }
+.fd-btn--accent:hover { background: var(--sl-color-accent-high); color: var(--sl-color-text-invert); }
+:root[data-theme='light'] .fd-btn--accent:hover { color: #ffffff; }
+.fd-btn--soft {
+  border-color: transparent;
+  background: var(--sl-color-accent-low);
+  color: var(--sl-color-text-accent);
+  font-weight: 600;
+}
+.fd-btn--soft:hover { background: var(--sl-color-accent-low); color: var(--sl-color-white); }
+
+.fd-mono { font-family: var(--sl-font-mono); }
+.fd-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Схема делегирования (страница «Ликвидная демократия») */
+.fd-delegation {
+  margin-top: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 0.875rem;
+  background: var(--fd-surface);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.fd-delegation__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.625rem;
+  margin: 0 !important;
+  color: var(--sl-color-gray-3);
+}
+.fd-delegation__track {
+  width: 10rem;
+  font-family: var(--sl-font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.fd-delegation__note { font-size: 0.8125rem; }
+.fd-chip {
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--sl-color-gray-5);
+  color: var(--sl-color-white);
+  font-size: 0.875rem;
+}
+.fd-chip--you {
+  background: var(--sl-color-white);
+  border-color: var(--sl-color-white);
+  color: var(--sl-color-black);
+  font-weight: 500;
+}
+.fd-chip--self {
+  background: var(--sl-color-accent-low);
+  border-color: transparent;
+  color: var(--sl-color-text-accent);
+  font-weight: 600;
+}
+.fd-delegation figcaption {
+  margin: 0 !important;
+  font-size: 0.8125rem;
+  color: var(--sl-color-gray-3);
+}
+
+/* Схемы на страницах документации (src/components/diagrams/) */
+.fd-fig {
+  margin-top: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 0.875rem;
+  background: var(--fd-surface);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.fd-fig figcaption {
+  font-size: 0.8125rem;
+  color: var(--sl-color-gray-3);
+}
+.fd-node {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 0.625rem;
+  font-size: 0.875rem;
+  line-height: 1.35;
+  color: var(--sl-color-white);
+  text-align: center;
+}
+.fd-node strong { font-weight: 600; }
+.fd-node span { font-size: 0.8125rem; color: var(--sl-color-gray-3); }
+.fd-node--current {
+  border-color: var(--sl-color-accent);
+  background: var(--sl-color-accent-low);
+}
+.fd-node--current span { color: var(--sl-color-text-accent); }
+.fd-node--dashed { border-style: dashed; }
+.fd-link {
+  font-size: 0.8125rem;
+  color: var(--sl-color-gray-3);
+}
+@media (max-width: 40rem) {
+  .fd-fig { padding: 1rem; }
+}
+
+/* Подстройки под макет */
+.site-title { color: var(--sl-color-white); }
+.sl-markdown-content h2:not(:where(.not-content *)) { font-size: 1.5rem; }
+.sl-markdown-content h3:not(:where(.not-content *)) { font-size: 1.125rem; }
+h1#_top { font-size: clamp(2rem, 1.4rem + 2vw, 2.6rem); }
+
+/* Активный пункт сайдбара — мягкий акцент, как в макете */
+.sidebar-content a[aria-current='page'],
+.sidebar-content a[aria-current='page']:hover,
+.sidebar-content a[aria-current='page']:focus {
+  background: var(--sl-color-accent-low);
+  color: var(--sl-color-text-accent);
+  font-weight: 600;
+}
+
+/* Заметки — плашка на мягком фоне без цветной полосы слева */
+.starlight-aside {
+  border: 0;
+  border-radius: 0.75rem;
+}
+.starlight-aside--note {
+  background: var(--sl-color-accent-low);
+}
+
+/* Библиотека и страницы документов — шире обычной колонки текста */
+:root:has(.not-content.lib) .sl-container,
+:root:has(.not-content.docpage) .sl-container {
+  max-width: 78rem;
+}

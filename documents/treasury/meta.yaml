@@ -1,0 +1,10 @@
+title: Казна и токеномика
+description: Распределение средств и вознаграждения участникам.
+category: Whitepaper
+status: draft
+related:
+  - label: Казна и токеномика — в документации
+    href: /dao/treasury/
+versions:
+  - version: "0.1"
+    source: v0.1.typ

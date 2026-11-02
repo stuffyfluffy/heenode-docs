@@ -1,0 +1,11 @@
+title: Порядок форка SubDAO
+description: Как группа участников забирает базу знаний subDAO и запускает свою версию.
+category: Регламенты
+status: draft
+featured: true
+related:
+  - label: SubDAO и право форка — в документации
+    href: /dao/subdao-fork/
+versions:
+  - version: "0.1"
+    source: v0.1.typ

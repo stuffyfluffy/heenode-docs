@@ -1,0 +1,75 @@
+---
+// Вертикальная схема этапов. gate — условие перехода к следующему этапу.
+interface Stage { title: string; desc: string; current?: boolean; mark?: string; gate?: string }
+interface Props { items: Stage[]; caption?: string; numbered?: boolean }
+
+const { items, caption, numbered = true } = Astro.props;
+---
+
+<figure class="fd-fig not-content">
+  <ol>
+    {
+      items.map((it, i) => (
+        <li>
+          <div class:list={['fd-node', 'stage', { 'fd-node--current': it.current }]}>
+            <div class="head">
+              <strong>
+                {numbered && `${i + 1}. `}
+                {it.title}
+              </strong>
+              {it.mark && <span>{it.mark}</span>}
+            </div>
+            <span>{it.desc}</span>
+          </div>
+          {it.gate && (
+            <div class="fd-link gate">
+              <span class="diamond" aria-hidden="true" />
+              {it.gate}
+            </div>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .stage {
+    text-align: left;
+  }
+  .head {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .gate {
+    position: relative;
+    padding: 0.7rem 0 0.7rem 2.25rem;
+  }
+  .gate::before {
+    content: '';
+    position: absolute;
+    left: 1rem;
+    top: 0;
+    bottom: 0;
+    border-left: 1px solid var(--sl-color-gray-5);
+  }
+  .diamond {
+    position: absolute;
+    left: calc(1rem - 0.3rem);
+    top: 50%;
+    width: 0.6rem;
+    height: 0.6rem;
+    margin-top: -0.3rem;
+    background: var(--sl-color-gray-4);
+    transform: rotate(45deg);
+  }
+</style>

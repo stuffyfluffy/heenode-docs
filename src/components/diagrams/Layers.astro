@@ -1,0 +1,86 @@
+---
+// Схема из рядов блоков. Между рядами — подпись перехода, внутри ряда — стрелки.
+interface Node { title: string; sub?: string; current?: boolean; dashed?: boolean }
+interface Arrow { arrow: string }
+interface Row { items: (Node | Arrow)[]; link?: string }
+interface Props { rows: Row[]; caption?: string }
+
+const { rows, caption } = Astro.props;
+
+// На узком экране ряд встаёт в колонку, и горизонтальная стрелка становится вертикальной
+const vertical = (arrow: string) => {
+  const label = arrow.replace(/[←→]/g, '').trim();
+  return `${arrow.includes('←') ? '↑' : '↓'} ${label}`.trim();
+};
+---
+
+<figure class="fd-fig not-content">
+  {
+    rows.map((row) => (
+      <>
+        <div class="row">
+          {row.items.map((it) =>
+            'arrow' in it ? (
+              <span class="fd-link arrow">
+                <span class="h">{it.arrow}</span>
+                <span class="v">{vertical(it.arrow)}</span>
+              </span>
+            ) : (
+              <div class:list={['fd-node', { 'fd-node--current': it.current, 'fd-node--dashed': it.dashed }]}>
+                <strong>{it.title}</strong>
+                {it.sub && <span>{it.sub}</span>}
+              </div>
+            ),
+          )}
+        </div>
+        {row.link && (
+          <div class="fd-link down">
+            <span aria-hidden="true">↓</span> {row.link}
+          </div>
+        )}
+      </>
+    ))
+  }
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  .row .fd-node {
+    flex: 1 1 7rem;
+    max-width: 22rem;
+    justify-content: center;
+  }
+  .arrow {
+    align-self: center;
+    white-space: nowrap;
+  }
+  .down {
+    text-align: center;
+  }
+  .v {
+    display: none;
+  }
+  @media (max-width: 40rem) {
+    .row:has(.arrow) {
+      flex-direction: column;
+      align-items: center;
+    }
+    .row:has(.arrow) .fd-node {
+      width: 100%;
+      flex-basis: auto;
+    }
+    .h {
+      display: none;
+    }
+    .v {
+      display: inline;
+    }
+  }
+</style>

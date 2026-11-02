@@ -1,0 +1,229 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import PdfViewer from '../../../components/PdfViewer.astro';
+import {
+  getDocuments,
+  pdfFor,
+  formatBytes,
+  formatDate,
+  pagesLabel,
+  STATUS_LABEL,
+  type DocEntry,
+} from '../../../lib/documents';
+import { url } from '../../../lib/url';
+
+export async function getStaticPaths() {
+  const docs = await getDocuments();
+  return docs.flatMap((doc) => [
+    // /documents/<id>/ — текущая версия
+    { params: { id: doc.id, version: undefined }, props: { doc, versionIndex: 0 } },
+    // /documents/<id>/v<версия>/ — конкретная версия
+    ...doc.data.versions.map((v, i) => ({
+      params: { id: doc.id, version: `v${v.version}` },
+      props: { doc, versionIndex: i },
+    })),
+  ]);
+}
+
+interface Props {
+  doc: DocEntry;
+  versionIndex: number;
+}
+
+const { doc, versionIndex } = Astro.props;
+const { data } = doc;
+const version = data.versions[versionIndex];
+const isLatest = versionIndex === 0;
+const pdf = pdfFor(doc.id, version.version);
+const pdfUrl = url(pdf.href);
+const repo = 'https://github.com/stuffyfluffy/frontier-docs';
+---
+
+<StarlightPage
+  frontmatter={{
+    title: data.title,
+    description: data.description,
+    template: 'splash',
+    tableOfContents: false,
+    editUrl: false,
+    pagefind: !Astro.params.version,
+  }}
+>
+  <div class="docpage not-content">
+    <div class="head">
+      <nav class="crumbs fd-mono" aria-label="Хлебные крошки">
+        <a href={url('documents/')}>← Документы</a>
+        <span aria-hidden="true">/</span>
+        <span>{data.category}</span>
+      </nav>
+      <div class="head__row">
+        <span class="fd-mono version">v{version.version}</span>
+        <span class="fd-badge" data-status={isLatest ? data.status : 'archived'}>
+          {isLatest ? STATUS_LABEL[data.status] : 'Прежняя версия'}
+        </span>
+        <div class="spacer"></div>
+        <button type="button" class="fd-btn" data-copy-link aria-label="Скопировать ссылку на документ">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"></path><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"></path></svg>
+          <span>Ссылка</span>
+        </button>
+        <a class="fd-btn fd-btn--accent" href={pdfUrl} download={pdf.filename}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 4v12M7 11l5 5 5-5M4 20h16"></path></svg>
+          Скачать PDF
+        </a>
+      </div>
+      {
+        !isLatest && (
+          <p class="notice">
+            Это прежняя версия документа. <a href={url(`documents/${doc.id}/`)}>Перейти к текущей v{data.versions[0].version}</a>
+          </p>
+        )
+      }
+    </div>
+
+    <div class="layout">
+      <section class="main" aria-label="Документ">
+        <PdfViewer src={pdfUrl} title={data.title} pages={pdf.pages} />
+        <details class="text">
+          <summary>Текст документа</summary>
+          <pre>{pdf.text}</pre>
+        </details>
+      </section>
+
+      <aside class="side">
+        <section class="panel">
+          <h2>Сведения</h2>
+          <dl>
+            <dt>Статус</dt>
+            <dd><span class="fd-badge" data-status={data.status}>{STATUS_LABEL[data.status]}</span></dd>
+            <dt>Утверждён</dt>
+            <dd>{version.approved ?? 'Не утверждён'}</dd>
+            <dt>Дата</dt>
+            <dd class="fd-mono">{formatDate(version.date)}</dd>
+            <dt>Размер</dt>
+            <dd>{formatBytes(pdf.bytes)} · {pagesLabel(pdf.pages)}</dd>
+            <dt>SHA-256</dt>
+            <dd class="fd-mono hash" data-hash>{pdf.sha256}</dd>
+          </dl>
+          <button type="button" class="fd-btn fd-btn--soft wide" data-copy-hash>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a1 1 0 0 1 1-1h9"></path></svg>
+            <span>Скопировать SHA-256</span>
+          </button>
+          <p class="hint">
+            Сверьте с хешем скачанного файла:{' '}
+            <code>shasum -a 256 {pdf.filename}</code>
+          </p>
+        </section>
+
+        <section class="panel">
+          <h2>История версий</h2>
+          <ol class="versions">
+            {
+              data.versions.map((v, i) => (
+                <li>
+                  {i === versionIndex ? (
+                    <span class="strong">
+                      v{v.version}
+                      {i === 0 && <span class="muted"> · текущая</span>}
+                    </span>
+                  ) : (
+                    <a href={url(i === 0 ? `documents/${doc.id}/` : `documents/${doc.id}/v${v.version}/`)}>
+                      v{v.version}
+                      {i === 0 && ' · текущая'}
+                    </a>
+                  )}
+                  <span class="fd-mono muted">{formatDate(v.date)}</span>
+                </li>
+              ))
+            }
+          </ol>
+          <a href={`${repo}/commits/main/documents/${doc.id}`}>Все изменения в репозитории</a>
+        </section>
+
+        <section class="panel">
+          <h2>Связано</h2>
+          {data.related.map((r) => <a href={url(r.href)}>{r.label}</a>)}
+          <a href={`${repo}/edit/main/documents/${doc.id}/${version.source ?? 'meta.yaml'}`}>Предложить изменение</a>
+        </section>
+      </aside>
+    </div>
+  </div>
+</StarlightPage>
+
+<script>
+  async function copy(button: HTMLButtonElement, value: string, done: string) {
+    const label = button.querySelector('span')!;
+    const original = label.textContent;
+    try {
+      await navigator.clipboard.writeText(value);
+      label.textContent = done;
+    } catch {
+      label.textContent = 'Не удалось скопировать';
+    }
+    setTimeout(() => (label.textContent = original), 1800);
+  }
+  document.querySelector<HTMLButtonElement>('[data-copy-hash]')?.addEventListener('click', (e) => {
+    copy(e.currentTarget as HTMLButtonElement, document.querySelector('[data-hash]')!.textContent!.trim(), 'Скопировано');
+  });
+  document.querySelector<HTMLButtonElement>('[data-copy-link]')?.addEventListener('click', (e) => {
+    copy(e.currentTarget as HTMLButtonElement, location.href, 'Скопировано');
+  });
+</script>
+
+<style>
+  .docpage { display: flex; flex-direction: column; gap: 1.5rem; }
+  .crumbs { display: flex; gap: 0.5rem; font-size: 0.8125rem; color: var(--sl-color-gray-3); }
+  .crumbs a { color: var(--sl-color-gray-3); text-decoration: none; }
+  .crumbs a:hover { color: var(--sl-color-white); }
+  .head { display: flex; flex-direction: column; gap: 0.75rem; }
+  .head__row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; }
+  .version { font-size: 0.9375rem; color: var(--sl-color-gray-2); }
+  .spacer { flex: 1 1 1rem; }
+  .notice {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border-radius: 0.625rem;
+    background: var(--fd-warn-bg);
+    color: var(--fd-warn);
+    font-size: 0.875rem;
+  }
+  .notice a { color: inherit; font-weight: 600; }
+  .layout { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 1.5rem; }
+  .main { flex: 999 1 32rem; min-width: 0; display: flex; flex-direction: column; gap: 1rem; }
+  .side { flex: 1 1 18rem; max-width: 22rem; display: flex; flex-direction: column; gap: 1rem; }
+  .panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    padding: 1.25rem;
+    border: 1px solid var(--fd-line);
+    border-radius: 0.875rem;
+    background: var(--fd-surface);
+    font-size: 0.875rem;
+  }
+  .docpage .panel h2 { margin: 0 0 0.25rem; font-family: var(--fd-font-display); font-size: 1rem; line-height: 1.3; font-weight: 500; color: var(--sl-color-white); }
+  dl { margin: 0; display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: 0.625rem 0.75rem; }
+  dt { color: var(--sl-color-gray-3); }
+  dd { margin: 0; color: var(--sl-color-white); }
+  .hash { overflow-wrap: anywhere; font-size: 0.8125rem; }
+  .wide { width: 100%; min-height: 44px; margin-top: 0.5rem; }
+  .hint { margin: 0; font-size: 0.8125rem; line-height: 1.5; color: var(--sl-color-gray-3); }
+  .hint code { font-size: 0.75rem; overflow-wrap: anywhere; }
+  .versions { list-style: none; margin: 0; padding: 0; }
+  .versions li { display: flex; justify-content: space-between; gap: 0.75rem; padding: 0.5rem 0; border-top: 1px solid var(--fd-line); }
+  .versions li:first-child { border-top: 0; }
+  .strong { font-weight: 600; color: var(--sl-color-white); }
+  .muted { color: var(--sl-color-gray-3); font-weight: 400; }
+  .text { border: 1px solid var(--fd-line); border-radius: 0.875rem; background: var(--fd-surface); }
+  .text summary { padding: 0.875rem 1.25rem; cursor: pointer; font-weight: 600; }
+  .text pre {
+    margin: 0;
+    padding: 0 1.25rem 1.25rem;
+    white-space: pre-wrap;
+    font-family: var(--sl-font);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--sl-color-gray-2);
+    background: none;
+    border: 0;
+  }
+</style>

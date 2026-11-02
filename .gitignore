@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.astro/
+# Генерируются при сборке из documents/
+public/docs/
+src/generated/
+.DS_Store
+.raw 
+# папка с сырыми документами word

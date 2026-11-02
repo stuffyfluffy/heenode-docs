@@ -1,6 +1,8 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import { satteri } from '@astrojs/markdown-satteri';
+import { baseLinks } from './src/lib/base-links.mjs';
 
 // SITE_URL и BASE_PATH задаются в CI. Для своего домена BASE_PATH не нужен.
 const site = process.env.SITE_URL || 'https://docs.example.org';
@@ -9,6 +11,10 @@ const base = process.env.BASE_PATH || '/';
 export default defineConfig({
   site,
   base,
+  markdown: {
+    // Ссылки в контенте пишутся от корня («/dao/treasury/») — base добавляется при сборке.
+    processor: satteri({ hastPlugins: [baseLinks(base)] }),
+  },
   integrations: [
     starlight({
       title: 'Frontier DAO',

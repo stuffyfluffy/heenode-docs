@@ -5,7 +5,9 @@ import { satteri } from '@astrojs/markdown-satteri';
 import { baseLinks } from './src/lib/base-links.mjs';
 
 // SITE_URL и BASE_PATH задаются в CI. Для своего домена BASE_PATH не нужен.
-const site = process.env.SITE_URL || 'https://docs.example.org';
+// Схему можно не указывать: «example.org» превратится в «https://example.org».
+const siteEnv = process.env.SITE_URL?.trim();
+const site = siteEnv ? (/^https?:\/\//.test(siteEnv) ? siteEnv : `https://${siteEnv}`) : 'https://docs.example.org';
 const base = process.env.BASE_PATH || '/';
 
 export default defineConfig({

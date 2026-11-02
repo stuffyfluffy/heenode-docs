@@ -82,6 +82,8 @@ export default defineConfig({
             { slug: 'governance/proposals' },
             { slug: 'governance/voting' },
             { slug: 'governance/delegation' },
+            { slug: 'governance/veto' },
+            { slug: 'governance/ratification' },
           ],
         },
         {
@@ -91,6 +93,7 @@ export default defineConfig({
             { slug: 'normative/overview' },
             { slug: 'normative/charter' },
             { slug: 'normative/user-agreement' },
+            { slug: 'normative/ai-policy' },
           ],
         },
         {

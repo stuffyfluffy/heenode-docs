@@ -2,6 +2,9 @@ title: Регламент использования ИИ
 description: ИИ — инструмент, за результат отвечает человек. Раскрытие, экзамены, агенты.
 category: Регламенты
 status: draft
+related:
+  - label: Использование ИИ — простым языком
+    href: /normative/ai-policy/
 versions:
   - version: "0.1"
     source: v0.1.typ

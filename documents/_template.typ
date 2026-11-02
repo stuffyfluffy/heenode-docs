@@ -1,4 +1,4 @@
-// Общий шаблон нормативных документов Frontier DAO.
+// Общий шаблон нормативных документов Heenode DAO.
 // Использование: #import "../_template.typ": doc
 //                #show: doc.with(title: "…", version: "1.0", status: "active")
 
@@ -14,7 +14,7 @@
   status: "active",
   body,
 ) = {
-  set document(title: title, author: "Frontier DAO")
+  set document(title: title, author: "Heenode DAO")
   set text(lang: "ru", font: ("Libertinus Serif", "New Computer Modern"), size: 11pt, fill: ink)
   set par(justify: true, leading: 0.72em, spacing: 1.1em)
   set page(
@@ -22,7 +22,7 @@
     margin: (x: 2.4cm, top: 2.6cm, bottom: 2.4cm),
     header: {
       set text(font: "DejaVu Sans Mono", size: 7.5pt, fill: muted)
-      grid(columns: (1fr, auto), [FRONTIER DAO], [v#version])
+      grid(columns: (1fr, auto), [HEENODE DAO], [v#version])
       v(-4pt)
       line(length: 100%, stroke: 0.4pt + line-color)
     },

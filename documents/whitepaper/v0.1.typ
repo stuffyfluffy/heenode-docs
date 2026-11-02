@@ -2,7 +2,7 @@
 #import "diagrams.typ": money-flow, roadmap
 #show: doc.with(
   title: "Сетевое государство свободного обучения",
-  subtitle: "Frontier DAO для открытого знания",
+  subtitle: "Heenode DAO для открытого знания",
   kind: "Whitepaper",
   version: "0.1",
   status: "draft",

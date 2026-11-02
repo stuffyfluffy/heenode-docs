@@ -17,8 +17,8 @@ export default defineConfig({
   },
   integrations: [
     starlight({
-      title: 'Frontier DAO',
-      description: 'Документация и нормативные документы Frontier DAO',
+      title: 'Heenode DAO',
+      description: 'Документация и нормативные документы Heenode DAO',
       logo: { src: './src/assets/logo.svg', replacesTitle: false },
       favicon: '/favicon.svg',
       defaultLocale: 'root',
@@ -27,8 +27,8 @@ export default defineConfig({
         en: { label: 'English', lang: 'en' },
       },
       // TODO: заменить на адрес репозитория
-      social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/stuffyfluffy/frontier-docs' }],
-      editLink: { baseUrl: 'https://github.com/stuffyfluffy/frontier-docs/edit/main/' },
+      social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/stuffyfluffy/heenode-docs' }],
+      editLink: { baseUrl: 'https://github.com/stuffyfluffy/heenode-docs/edit/main/' },
       lastUpdated: true,
       customCss: [
         '@fontsource/ibm-plex-sans/400.css',

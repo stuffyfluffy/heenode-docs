@@ -21,7 +21,7 @@ export default defineConfig({
     starlight({
       title: 'Heenode DAO',
       description: 'Документация и нормативные документы Heenode DAO',
-      logo: { src: './src/assets/logo.svg', replacesTitle: false },
+      logo: { light: './src/assets/logo-light.svg', dark: './src/assets/logo-dark.svg', replacesTitle: false },
       favicon: '/favicon.svg',
       defaultLocale: 'root',
       locales: {

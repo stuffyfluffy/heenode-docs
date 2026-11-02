@@ -15,9 +15,10 @@
   --sl-color-gray-6: #1d1f25;
   --sl-color-black: #141519;
 
-  --sl-color-accent-low: #1b2858;
-  --sl-color-accent: #6f93ff;
-  --sl-color-accent-high: #c9d6ff;
+  /* Акцент — цвета логотипа; в светлой теме оранжевый темнее, чтобы ссылки читались на белом */
+  --sl-color-accent-low: #3a2810;
+  --sl-color-accent: #f2a541;
+  --sl-color-accent-high: #fcd9a4;
 
   --fd-surface: #1a1c22;
   --fd-surface-sunk: #202229;
@@ -43,9 +44,9 @@
   --sl-color-gray-7: #ffffff;
   --sl-color-black: #f6f5f0;
 
-  --sl-color-accent-low: #e3e9fb;
-  --sl-color-accent: #1d4ed8;
-  --sl-color-accent-high: #1e3a8a;
+  --sl-color-accent-low: #fbebd5;
+  --sl-color-accent: #a65308;
+  --sl-color-accent-high: #7a3c06;
 
   --sl-color-bg-nav: #ffffff;
   --sl-color-bg-sidebar: #f6f5f0;

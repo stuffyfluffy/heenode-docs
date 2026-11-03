@@ -94,6 +94,7 @@ export default defineConfig({
             { slug: 'normative/charter' },
             { slug: 'normative/user-agreement' },
             { slug: 'normative/ai-policy' },
+            { slug: 'normative/licensing' },
           ],
         },
         {

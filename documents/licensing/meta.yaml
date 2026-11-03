@@ -1,0 +1,10 @@
+title: Регламент лицензирования
+description: Лицензии курсов, исследований, кода, проектов и всех материалов DAO; соглашение автора, коммерческая лицензия и доходы.
+category: Регламенты
+status: draft
+related:
+  - label: Лицензии материалов — простым языком
+    href: /normative/licensing/
+versions:
+  - version: "0.1"
+    source: v0.1.typ

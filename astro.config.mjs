@@ -20,7 +20,7 @@ export default defineConfig({
   integrations: [
     starlight({
       title: 'Heenode DAO',
-      description: 'Документация и нормативные документы Heenode DAO',
+      description: 'Документация и нормативные акты Heenode DAO',
       logo: { light: './src/assets/logo-light.svg', dark: './src/assets/logo-dark.svg', replacesTitle: false },
       favicon: '/favicon.svg',
       defaultLocale: 'root',
@@ -87,8 +87,8 @@ export default defineConfig({
           ],
         },
         {
-          label: 'Нормативные документы',
-          translations: { en: 'Normative documents' },
+          label: 'Нормативные акты',
+          translations: { en: 'Normative acts' },
           items: [
             { slug: 'normative/overview' },
             { slug: 'normative/charter' },
